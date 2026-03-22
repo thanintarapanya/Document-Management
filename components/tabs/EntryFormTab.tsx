@@ -78,6 +78,31 @@ export default function EntryFormTab() {
   const [exportFilters, setExportFilters] = useState({ series: 'ALL', grade: 'ALL' });
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const renderToast = () => (
+    <AnimatePresence>
+      {toastMessage && (
+        <motion.div
+          initial={{ opacity: 0, y: 50, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.9 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-xl flex items-center gap-3"
+        >
+          <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <CheckCircle2 className="w-5 h-5" />
+          </div>
+          <p className="text-sm font-medium">{toastMessage}</p>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 
   const [formData, setFormData] = useState({
     // Step 1
@@ -220,6 +245,7 @@ export default function EntryFormTab() {
   const handleDelete = (id: number) => {
     if (confirm('Are you sure you want to delete this entry?')) {
       deleteEntry(id);
+      showToast('Racer deleted and moved to Recently Deleted');
     }
   };
 
@@ -363,6 +389,7 @@ export default function EntryFormTab() {
 
   if (view === 'list') {
     return (
+      <>
       <motion.div 
         key="list-view"
         initial={{ opacity: 0, y: 10 }}
@@ -573,11 +600,15 @@ export default function EntryFormTab() {
           )}
         </AnimatePresence>
       </motion.div>
+
+      {renderToast()}
+    </>
     );
   }
 
   if (view === 'view') {
     return (
+      <>
       <motion.div 
         key="view-mode"
         initial={{ opacity: 0, y: 10 }}
@@ -601,15 +632,29 @@ export default function EntryFormTab() {
               <p className="text-slate-500 font-light text-sm">Detailed view of the racer&apos;s information.</p>
             </div>
           </div>
-          <button 
-            onClick={() => {
-              setCurrentStep(1);
-              setView('form');
-            }}
-            className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-sm font-medium transition-all shadow-sm shadow-orange-500/20"
-          >
-            Edit Entry
-          </button>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => {
+                if (confirm('Are you sure you want to delete this entry?')) {
+                  deleteEntry(editingId!);
+                  setView('list');
+                  showToast('Racer deleted and moved to Recently Deleted');
+                }
+              }}
+              className="px-6 py-3 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-full text-sm font-medium transition-all"
+            >
+              Delete
+            </button>
+            <button 
+              onClick={() => {
+                setCurrentStep(1);
+                setView('form');
+              }}
+              className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-sm font-medium transition-all shadow-sm shadow-orange-500/20"
+            >
+              Edit Entry
+            </button>
+          </div>
         </div>
 
         <div className="space-y-6">
@@ -832,11 +877,14 @@ export default function EntryFormTab() {
           </div>
         </div>
       </motion.div>
+      {renderToast()}
+      </>
     );
   }
 
   // Form View
   return (
+    <>
     <motion.div 
       key="form-view"
       initial={{ opacity: 0, y: 10 }}
@@ -997,17 +1045,33 @@ export default function EntryFormTab() {
 
         {/* Navigation Buttons */}
         <div className="flex items-center justify-between mt-12 pt-8 border-t border-slate-100 max-w-3xl mx-auto">
-          <button
-            onClick={handleBack}
-            disabled={currentStep === 1 || isSubmitting || isSubmitted}
-            className={`px-8 py-3 rounded-full text-sm font-medium transition-all ${
-              currentStep === 1 
-                ? 'text-slate-300 cursor-not-allowed' 
-                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-            }`}
-          >
-            Back
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handleBack}
+              disabled={currentStep === 1 || isSubmitting || isSubmitted}
+              className={`px-8 py-3 rounded-full text-sm font-medium transition-all ${
+                currentStep === 1 
+                  ? 'text-slate-300 cursor-not-allowed' 
+                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              }`}
+            >
+              Back
+            </button>
+            {editingId && (
+              <button
+                onClick={() => {
+                  if (confirm('Are you sure you want to delete this entry?')) {
+                    deleteEntry(editingId);
+                    setView('list');
+                    showToast('Racer deleted and moved to Recently Deleted');
+                  }
+                }}
+                className="px-8 py-3 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-full text-sm font-medium transition-all"
+              >
+                Delete
+              </button>
+            )}
+          </div>
 
           {currentStep < 5 ? (
             <button
@@ -1036,5 +1100,7 @@ export default function EntryFormTab() {
         </div>
       </div>
     </motion.div>
+    {renderToast()}
+    </>
   );
 }
