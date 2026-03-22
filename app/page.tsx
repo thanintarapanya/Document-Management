@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import * as Tabs from '@radix-ui/react-tabs';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -19,13 +20,19 @@ import {
   LogOut
 } from 'lucide-react';
 
-import DashboardTab from '@/components/tabs/DashboardTab';
-import EntryFormTab from '@/components/tabs/EntryFormTab';
-import ChecklistTab from '@/components/tabs/ChecklistTab';
-import InspectionTab from '@/components/tabs/InspectionTab';
-import ReportTab from '@/components/tabs/ReportTab';
-import RequestTab from '@/components/tabs/RequestTab';
-import DeletedTab from '@/components/tabs/DeletedTab';
+const LoadingFallback = () => (
+  <div className="w-full h-full flex items-center justify-center">
+    <div className="w-8 h-8 border-2 border-orange-500/30 border-t-orange-500 rounded-full animate-spin" />
+  </div>
+);
+
+const DashboardTab = dynamic(() => import('@/components/tabs/DashboardTab'), { loading: LoadingFallback });
+const EntryFormTab = dynamic(() => import('@/components/tabs/EntryFormTab'), { loading: LoadingFallback });
+const ChecklistTab = dynamic(() => import('@/components/tabs/ChecklistTab'), { loading: LoadingFallback });
+const InspectionTab = dynamic(() => import('@/components/tabs/InspectionTab'), { loading: LoadingFallback });
+const ReportTab = dynamic(() => import('@/components/tabs/ReportTab'), { loading: LoadingFallback });
+const RequestTab = dynamic(() => import('@/components/tabs/RequestTab'), { loading: LoadingFallback });
+const DeletedTab = dynamic(() => import('@/components/tabs/DeletedTab'), { loading: LoadingFallback });
 
 const TABS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, component: DashboardTab },
@@ -48,6 +55,10 @@ export default function Home() {
     setIsMounted(true);
   }, []);
 
+  const ActiveComponent = useMemo(() => {
+    return TABS.find(t => t.id === activeTab)?.component || DashboardTab;
+  }, [activeTab]);
+
   if (!isMounted) return null;
 
   return (
@@ -56,6 +67,7 @@ export default function Home() {
       <motion.aside 
         initial={false}
         animate={{ width: isSidebarOpen ? 240 : 80 }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         className="glass-panel m-4 mr-2 flex flex-col overflow-hidden border-r border-slate-200 relative z-10"
       >
         <div className="p-6 flex items-center justify-between border-b border-slate-200">
@@ -65,6 +77,7 @@ export default function Home() {
                 initial={{ opacity: 0, width: 0 }}
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={{ opacity: 0, width: 0 }}
+                transition={{ duration: 0.2 }}
                 className="font-medium text-lg tracking-wide whitespace-nowrap"
               >
                 RaceDoc
@@ -99,6 +112,7 @@ export default function Home() {
                       initial={{ opacity: 0, width: 0 }}
                       animate={{ opacity: 1, width: 'auto' }}
                       exit={{ opacity: 0, width: 0 }}
+                      transition={{ duration: 0.2 }}
                       className="whitespace-nowrap font-light text-sm"
                     >
                       {tab.label}
@@ -119,6 +133,7 @@ export default function Home() {
                   initial={{ opacity: 0, width: 0 }}
                   animate={{ opacity: 1, width: 'auto' }}
                   exit={{ opacity: 0, width: 0 }}
+                  transition={{ duration: 0.2 }}
                   className="whitespace-nowrap font-light text-sm"
                 >
                   Settings
@@ -137,6 +152,7 @@ export default function Home() {
                   initial={{ opacity: 0, width: 0 }}
                   animate={{ opacity: 1, width: 'auto' }}
                   exit={{ opacity: 0, width: 0 }}
+                  transition={{ duration: 0.2 }}
                   className="whitespace-nowrap font-light text-sm"
                 >
                   Sign Out
@@ -173,20 +189,16 @@ export default function Home() {
         {/* Tab Content Area */}
         <div className="flex-1 overflow-y-auto glass-panel p-8 relative">
           <AnimatePresence mode="wait">
-            {TABS.map((tab) => (
-              activeTab === tab.id && (
-                <motion.div
-                  key={tab.id}
-                  initial={{ opacity: 0, y: 10, filter: 'blur(8px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, y: -10, filter: 'blur(8px)' }}
-                  transition={{ duration: 0.3 }}
-                  className="h-full"
-                >
-                  <tab.component />
-                </motion.div>
-              )
-            ))}
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="h-full"
+            >
+              <ActiveComponent />
+            </motion.div>
           </AnimatePresence>
         </div>
       </main>

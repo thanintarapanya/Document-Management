@@ -32,9 +32,9 @@ export default function ReportTab() {
         {REPORTS.map((report, i) => (
           <motion.div 
             key={report.id}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: i * 0.1 }}
+            initial={{ opacity: 0, scale: 0.95, filter: 'blur(4px)' }}
+            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+            transition={{ delay: i * 0.1, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="glass-panel p-6 relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300"
           >
             <div className="flex justify-between items-start mb-4">

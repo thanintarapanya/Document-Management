@@ -50,9 +50,10 @@ export default function RequestTab() {
         {activeTab === 'inbox' ? (
           <motion.div 
             key="inbox"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="space-y-4"
           >
             {REQUESTS.map((req, i) => (
@@ -91,9 +92,10 @@ export default function RequestTab() {
         ) : (
           <motion.div 
             key="new"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="max-w-2xl mx-auto glass-panel p-8 space-y-6"
           >
             <div className="space-y-4">

@@ -53,9 +53,9 @@ export default function DashboardTab() {
         {stats.map((stat, i) => (
           <motion.div
             key={stat.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
+            initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ delay: i * 0.1, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className="glass-panel p-6 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300"
           >
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -75,9 +75,9 @@ export default function DashboardTab() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ delay: 0.3, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="glass-panel p-6 lg:col-span-2"
         >
           <h3 className="text-lg font-medium text-slate-900 mb-6">Entry Submissions</h3>
@@ -109,9 +109,9 @@ export default function DashboardTab() {
         </motion.div>
 
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+          initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ delay: 0.4, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="glass-panel p-6"
         >
           <h3 className="text-lg font-medium text-slate-900 mb-6">Recent Activity</h3>
