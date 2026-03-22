@@ -23,7 +23,7 @@ export default function LoginPage() {
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="w-full max-w-sm"
       >
         <div className="flex flex-col items-center text-center mb-16">

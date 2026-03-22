@@ -1,0 +1,147 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    // Collection: entries
+    // Document ID: auto-generated
+    // Fields:
+    //   - series: string
+    //   - grade: string
+    //   - carNumber: string
+    //   - nameEnglish: string
+    //   - userId: string
+    //   - createdAt: timestamp
+    //   - updatedAt: timestamp
+    //   - (other optional string fields)
+    //
+    // Collection: users
+    // Document ID: user UID
+    // Fields:
+    //   - email: string
+    //   - role: string ('admin' or 'user')
+    //   - createdAt: timestamp
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "info@embeddedlinuxgroup.com" && request.auth.token.email_verified == true));
+    }
+
+    function uidUnchanged() {
+      return !('userId' in request.resource.data) || request.resource.data.userId == request.auth.uid;
+    }
+
+    function uidNotModified() {
+      return !('userId' in request.resource.data) || request.resource.data.userId == resource.data.userId;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidOptionalString(field, minLen, maxLen) {
+      return !(field in request.resource.data) ||
+             (request.resource.data[field] is string &&
+              request.resource.data[field].size() >= minLen &&
+              request.resource.data[field].size() <= maxLen);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidEntry(data) {
+      return hasRequiredFields(['series', 'grade', 'carNumber', 'nameEnglish', 'userId', 'createdAt', 'updatedAt']) &&
+             data.series is string && data.series.size() > 0 && data.series.size() < 100 &&
+             data.grade is string && data.grade.size() > 0 && data.grade.size() < 100 &&
+             data.carNumber is string && data.carNumber.size() > 0 && data.carNumber.size() < 20 &&
+             data.nameEnglish is string && data.nameEnglish.size() > 0 && data.nameEnglish.size() < 100 &&
+             data.userId is string && data.userId.size() > 0 && data.userId.size() < 100 &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp &&
+             isValidOptionalString('stadium', 0, 100) &&
+             isValidOptionalString('nameThai', 0, 100) &&
+             isValidOptionalString('dob', 0, 50) &&
+             isValidOptionalString('bloodType', 0, 10) &&
+             isValidOptionalString('nationality', 0, 50) &&
+             isValidOptionalString('idCard', 0, 50) &&
+             isValidOptionalString('address', 0, 500) &&
+             isValidOptionalString('postcode', 0, 20) &&
+             isValidOptionalString('email', 0, 100) &&
+             isValidOptionalString('mobileNo', 0, 50) &&
+             isValidOptionalString('idLine', 0, 100) &&
+             isValidOptionalString('instagram', 0, 100) &&
+             isValidOptionalString('facebook', 0, 100) &&
+             isValidOptionalString('youtube', 0, 100) &&
+             isValidOptionalString('tiktok', 0, 100) &&
+             isValidOptionalString('competitionLicenseNo', 0, 100) &&
+             isValidOptionalString('categorizationGrade', 0, 50) &&
+             isValidOptionalString('issuedBy', 0, 100) &&
+             isValidOptionalString('dateOfIssued', 0, 50) &&
+             isValidOptionalString('expiryDate', 0, 50) &&
+             isValidOptionalString('carManufacturer', 0, 100) &&
+             isValidOptionalString('model', 0, 100) &&
+             isValidOptionalString('color', 0, 50) &&
+             isValidOptionalString('year', 0, 20) &&
+             isValidOptionalString('engineSize', 0, 50) &&
+             isValidOptionalString('engineCode', 0, 100) &&
+             isValidOptionalString('teamName', 0, 100) &&
+             isValidOptionalString('teamManagerName', 0, 100) &&
+             isValidOptionalString('managerMobileNo', 0, 50) &&
+             isValidOptionalString('requireTogetherForPitArea', 0, 100) &&
+             isValidOptionalString('addressForSendDocument', 0, 500) &&
+             isValidOptionalString('teamPostcode', 0, 20) &&
+             isValidOptionalString('teamMobileNo', 0, 50) &&
+             isValidOptionalString('consentingParty', 0, 100) &&
+             isValidOptionalString('signDate', 0, 50);
+    }
+
+    function isValidUser(data) {
+      return hasRequiredFields(['email', 'role', 'createdAt']) &&
+             data.email is string && isValidEmail(data.email) &&
+             data.role in ['admin', 'user'] &&
+             data.createdAt is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    
+    match /entries/{entryId} {
+      allow read: if isAuthenticated() && (isDocOwner() || isAdmin());
+      allow create: if isAuthenticated() && isValidEntry(request.resource.data) && uidUnchanged();
+      allow update: if isAuthenticated() && isValidEntry(request.resource.data) && uidNotModified() && (isDocOwner() || isAdmin()) && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isAuthenticated() && (isDocOwner() || isAdmin());
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow create: if isAuthenticated() && isValidUser(request.resource.data) && ((isOwner(userId) && request.resource.data.role == 'user') || isAdmin());
+      allow update: if isAuthenticated() && isValidUser(request.resource.data) && ((isOwner(userId) && request.resource.data.role == resource.data.role) || isAdmin()) && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isAdmin();
+    }
+  }
+}

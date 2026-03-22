@@ -2,22 +2,17 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useAppStore } from '@/lib/store';
 import { Trash2, RotateCcw, FileText, AlertTriangle, Clock } from 'lucide-react';
 
-const INITIAL_DELETED = [
-  { id: 'DEL-001', type: 'Entry Form', name: 'Team Red Bull Racing', deletedBy: 'Admin', deletedAt: '2 hours ago', expires: '6 days' },
-  { id: 'DEL-002', type: 'Inspection Report', name: 'Track Surface Audit - T1', deletedBy: 'Scrutineer 1', deletedAt: '1 day ago', expires: '5 days' },
-  { id: 'DEL-003', type: 'Competitor Request', name: 'REQ-003 Driver Sub', deletedBy: 'System', deletedAt: '3 days ago', expires: '3 days' },
-];
-
 export default function DeletedTab() {
-  const [deletedItems, setDeletedItems] = useState(INITIAL_DELETED);
+  const { deletedItems, restoreItem } = useAppStore();
   const [restoringId, setRestoringId] = useState<string | null>(null);
 
   const handleRestore = (id: string) => {
     setRestoringId(id);
     setTimeout(() => {
-      setDeletedItems(deletedItems.filter(item => item.id !== id));
+      restoreItem(id);
       setRestoringId(null);
     }, 1000);
   };
@@ -62,11 +57,12 @@ export default function DeletedTab() {
                 <AnimatePresence>
                   {deletedItems.map((item) => (
                     <motion.tr 
+                      layout
                       key={item.id}
-                      initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
-                      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                      exit={{ opacity: 0, x: -20, filter: 'blur(4px)' }}
-                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
                       className="border-b border-slate-100 hover:bg-slate-50 transition-colors group"
                     >
                       <td className="p-4">

@@ -45,10 +45,10 @@ export default function InspectionTab() {
             <AnimatePresence>
               {expanded === section.id && (
                 <motion.div 
-                  initial={{ height: 0, opacity: 0, filter: 'blur(4px)' }}
-                  animate={{ height: 'auto', opacity: 1, filter: 'blur(0px)' }}
-                  exit={{ height: 0, opacity: 0, filter: 'blur(4px)' }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   className="overflow-hidden"
                 >
                   <div className="p-6 space-y-6">
@@ -87,10 +87,10 @@ export default function InspectionTab() {
                           <AnimatePresence>
                             {itemStatus === 'fail' && (
                               <motion.div 
-                                initial={{ opacity: 0, y: -10, height: 0, filter: 'blur(4px)' }}
-                                animate={{ opacity: 1, y: 0, height: 'auto', filter: 'blur(0px)' }}
-                                exit={{ opacity: 0, y: -10, height: 0, filter: 'blur(4px)' }}
-                                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                                initial={{ opacity: 0, y: -10, height: 0 }}
+                                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                exit={{ opacity: 0, y: -10, height: 0 }}
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                 className="pt-4 border-t border-slate-100 space-y-4"
                               >
                                 <div className="space-y-2">

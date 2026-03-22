@@ -67,7 +67,7 @@ export default function Home() {
       <motion.aside 
         initial={false}
         animate={{ width: isSidebarOpen ? 240 : 80 }}
-        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="glass-panel m-4 mr-2 flex flex-col overflow-hidden border-r border-slate-200 relative z-10"
       >
         <div className="p-6 flex items-center justify-between border-b border-slate-200">
@@ -77,7 +77,7 @@ export default function Home() {
                 initial={{ opacity: 0, width: 0 }}
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={{ opacity: 0, width: 0 }}
-                transition={{ duration: 0.2 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className="font-medium text-lg tracking-wide whitespace-nowrap"
               >
                 RaceDoc
@@ -112,7 +112,7 @@ export default function Home() {
                       initial={{ opacity: 0, width: 0 }}
                       animate={{ opacity: 1, width: 'auto' }}
                       exit={{ opacity: 0, width: 0 }}
-                      transition={{ duration: 0.2 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
                       className="whitespace-nowrap font-light text-sm"
                     >
                       {tab.label}
@@ -133,7 +133,7 @@ export default function Home() {
                   initial={{ opacity: 0, width: 0 }}
                   animate={{ opacity: 1, width: 'auto' }}
                   exit={{ opacity: 0, width: 0 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   className="whitespace-nowrap font-light text-sm"
                 >
                   Settings
@@ -152,7 +152,7 @@ export default function Home() {
                   initial={{ opacity: 0, width: 0 }}
                   animate={{ opacity: 1, width: 'auto' }}
                   exit={{ opacity: 0, width: 0 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   className="whitespace-nowrap font-light text-sm"
                 >
                   Sign Out
@@ -191,10 +191,10 @@ export default function Home() {
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
               className="h-full"
             >
               <ActiveComponent />

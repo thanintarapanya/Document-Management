@@ -89,10 +89,10 @@ export default function ChecklistTab() {
                   return (
                     <motion.tr 
                       key={team.id}
-                      initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
-                      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                      exit={{ opacity: 0, scale: 0.95, filter: 'blur(4px)' }}
-                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
                       className="border-b border-slate-100 hover:bg-slate-50 transition-colors group"
                     >
                       <td className="p-4">

@@ -1,0 +1,75 @@
+{
+  "entities": {
+    "EntryForm": {
+      "title": "EntryForm",
+      "description": "A competitor's entry form for the race",
+      "type": "object",
+      "properties": {
+        "series": { "type": "string" },
+        "grade": { "type": "string" },
+        "carNumber": { "type": "string" },
+        "stadium": { "type": "string" },
+        "nameThai": { "type": "string" },
+        "nameEnglish": { "type": "string" },
+        "dob": { "type": "string" },
+        "bloodType": { "type": "string" },
+        "nationality": { "type": "string" },
+        "idCard": { "type": "string" },
+        "address": { "type": "string" },
+        "postcode": { "type": "string" },
+        "email": { "type": "string" },
+        "mobileNo": { "type": "string" },
+        "idLine": { "type": "string" },
+        "instagram": { "type": "string" },
+        "facebook": { "type": "string" },
+        "youtube": { "type": "string" },
+        "tiktok": { "type": "string" },
+        "competitionLicenseNo": { "type": "string" },
+        "categorizationGrade": { "type": "string" },
+        "issuedBy": { "type": "string" },
+        "dateOfIssued": { "type": "string" },
+        "expiryDate": { "type": "string" },
+        "carManufacturer": { "type": "string" },
+        "model": { "type": "string" },
+        "color": { "type": "string" },
+        "year": { "type": "string" },
+        "engineSize": { "type": "string" },
+        "engineCode": { "type": "string" },
+        "teamName": { "type": "string" },
+        "teamManagerName": { "type": "string" },
+        "managerMobileNo": { "type": "string" },
+        "requireTogetherForPitArea": { "type": "string" },
+        "addressForSendDocument": { "type": "string" },
+        "teamPostcode": { "type": "string" },
+        "teamMobileNo": { "type": "string" },
+        "consentingParty": { "type": "string" },
+        "signDate": { "type": "string" },
+        "createdAt": { "type": "timestamp" },
+        "updatedAt": { "type": "timestamp" },
+        "userId": { "type": "string" }
+      },
+      "required": ["series", "grade", "carNumber", "nameEnglish", "userId", "createdAt", "updatedAt"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile and role",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "createdAt": { "type": "timestamp" }
+      },
+      "required": ["email", "role", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/entries/{entryId}": {
+      "schema": { "$ref": "#/entities/EntryForm" },
+      "description": "Collection of race entry forms"
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Collection of user profiles"
+    }
+  }
+}
